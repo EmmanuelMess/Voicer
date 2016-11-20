@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 			SharedPreferences sharedPref = preference.getSharedPreferences();
 			SharedPreferences.Editor editor = sharedPref.edit();
 			editor.putInt(TIME_BETWEEN_WORDS_TEXT, Integer.valueOf(stringValue));
-			editor.commit();
+			editor.apply();
 
 			return true;
 		}

@@ -30,7 +30,7 @@ public class EditIntegerPreference extends EditTextPreference {
 	@Override
 	public void setText(String text) {
 		try {
-			getSharedPreferences().edit().putInt(getKey(), Integer.parseInt(text)).commit();
+			getSharedPreferences().edit().putInt(getKey(), Integer.parseInt(text)).apply();
 		} catch (Exception ex) {
 			Log.w(getClass().getSimpleName(), "Error while updating EditIntegerPreference: text=" + text, ex);
 		}

@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 		private final Object lock = new Object();
 		private int timeBetweenWords;
 
-		public SpeechThread(Context context, AppCompatActivity activity) {
+		SpeechThread(Context context, AppCompatActivity activity) {
 			SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
 
 			t = new TextToSpeech(context, this);
@@ -183,17 +183,17 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 
-		public TextToSpeech getTTS() {
+		TextToSpeech getTTS() {
 			return t;
 		}
 
-		public void startTTS() {
+		void startTTS() {
 			synchronized (lock) {
 				speak = true;
 			}
 		}
 
-		public void stopTTS() {
+		void stopTTS() {
 			synchronized (lock) {
 				speak = false;
 			}
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
 			this.status = status;
 		}
 
-		public int getStatus() {
+		int getStatus() {
 			return status;
 		}
 
