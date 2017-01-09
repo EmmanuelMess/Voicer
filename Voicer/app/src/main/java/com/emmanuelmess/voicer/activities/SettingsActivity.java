@@ -1,7 +1,6 @@
 package com.emmanuelmess.voicer.activities;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -46,12 +45,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			String stringValue = value.toString();
 			preference.setSummary(stringValue + "s");
-
-			SharedPreferences sharedPref = preference.getSharedPreferences();
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putInt(TIME_BETWEEN_WORDS_TEXT, Integer.valueOf(stringValue));
-			editor.apply();
-
 			return true;
 		}
 	};
