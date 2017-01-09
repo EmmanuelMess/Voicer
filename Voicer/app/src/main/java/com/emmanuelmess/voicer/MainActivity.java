@@ -19,6 +19,10 @@ import android.widget.Toast;
 
 import com.emmanuelmess.voicer.activities.SettingsActivity;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		final Context context = getApplicationContext();
-		final AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+		final AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
 		e = (TextView) findViewById(R.id.text);
 		//e.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla varius tortor magna, ut mattis ligula venenatis id. Suspendisse potenti. Etiam vitae lacus ex. Sed felis lorem, tempor nec tortor a, tempor tristique libero. Cras egestas, elit semper tempor vestibulum, magna.");
+
 		thread = new SpeechThread(getApplicationContext(), this);
 		thread.start();
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -75,7 +81,27 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		e.setText(prefs.getString(READABLE_TEXT, ""));
+
+		BufferedReader inputStream = null;
+
+		if(getIntent().getType() == null)
+			e.setText(prefs.getString(READABLE_TEXT, ""));
+		else if(equal(getIntent().getType(), "application/pdf"))
+			e.setText(getIntent().getData().toString());
+		else if(getIntent().getType().contains("text/")) {
+			try {
+				inputStream = new BufferedReader(new FileReader(getIntent().getData().getEncodedPath()));
+				String s, f = "";
+
+				while ((s = inputStream.readLine()) != null)
+					f += s;
+
+				e.setText(f);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		} else
+			throw new IllegalArgumentException("Unsupported type: " + getIntent().getType());
 	}
 
 	@Override
@@ -221,5 +247,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
+	private static boolean equal(Object o1, Object o2) {
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Objects.equals(o1, o2)) || o1.equals(o2);
+	}
 }
 
