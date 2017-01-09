@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
 	public static final String READABLE_TEXT = "text";
 
-
 	private SharedPreferences prefs;
 	private TextView e;
 	private SpeechThread thread = null;
