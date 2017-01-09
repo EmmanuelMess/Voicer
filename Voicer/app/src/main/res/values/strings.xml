@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Voicer</string>
     <string name="action_settings">Settings</string>
-    <string name="crash_0">You can help solve this error!</string>
+    <string name="crash_0">Send this report so that I can fix the issue</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="loading">Loading&#8230;</string>
+    <string name="loading">Loading…</string>
     <string name="example">This is an example</string>
-    <string name="loaded">Not loaded yet&#8230;</string>
-    <string name="error">Internal error!</string>
+    <string name="loaded">Not loaded yet…</string>
+    <string name="error">Internal error</string>
     <string name="write">Please write something</string>
     <string name="volume">Please turn the volume up</string>
 
