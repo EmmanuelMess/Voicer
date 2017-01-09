@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +19,13 @@ import android.widget.Toast;
 
 import com.emmanuelmess.voicer.activities.SettingsActivity;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
+	public static final String READABLE_TEXT = "text";
+
+	private SharedPreferences prefs;
 	private TextView e;
 	private SpeechThread thread = null;
 
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		final Context context = getApplicationContext();
 		final AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
@@ -68,11 +73,21 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		e.setText(prefs.getString(READABLE_TEXT, ""));
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 
+		//save text
+		if(e.getText() != "")
+			prefs.edit().putString(READABLE_TEXT, e.getText().toString()).apply();
+
 		if(thread.getTTS().isSpeaking()) {
-				thread.stopTTS();
+			thread.stopTTS();
 		}
 	}
 
@@ -101,16 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
 	public static int speak(TextToSpeech t, final CharSequence text, final int queueMode, final Bundle params, final String utteranceId) {
 		// Check if we're running on Android 5.0 or higher
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			return t.speak(text, queueMode, params, utteranceId);
-		} else {
-			HashMap<String, String> hashParams;
-
-			if (params == null) hashParams = null;
-			else throw new IllegalArgumentException();
-
-			return t.speak(text.toString(), queueMode, hashParams);
-		}
+		else
+			return t.speak(text.toString(), queueMode, null);
 	}
 
 	class SpeechThread extends Thread implements TextToSpeech.OnInitListener {
@@ -123,15 +132,10 @@ public class MainActivity extends AppCompatActivity {
 		private final Object lock = new Object();
 		private int timeBetweenWords;
 
-		public SpeechThread(Context context, AppCompatActivity activity) {
-			SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-
+		SpeechThread(Context context, AppCompatActivity activity) {
 			t = new TextToSpeech(context, this);
 
-			if (sharedPref.getString(SettingsActivity.TIME_BETWEEN_WORDS_TEXT, "") != "")
-				timeBetweenWords = Integer.valueOf(sharedPref.getString(SettingsActivity.TIME_BETWEEN_WORDS_TEXT, ""));
-			else timeBetweenWords = 3;
-
+			timeBetweenWords = prefs.getInt(SettingsActivity.TIME_BETWEEN_WORDS_TEXT, 3);
 			timeBetweenWords *= 1000;
 		}
 
@@ -183,17 +187,17 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 
-		public TextToSpeech getTTS() {
+		TextToSpeech getTTS() {
 			return t;
 		}
 
-		public void startTTS() {
+		void startTTS() {
 			synchronized (lock) {
 				speak = true;
 			}
 		}
 
-		public void stopTTS() {
+		void stopTTS() {
 			synchronized (lock) {
 				speak = false;
 			}
@@ -204,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 			this.status = status;
 		}
 
-		public int getStatus() {
+		int getStatus() {
 			return status;
 		}
 
