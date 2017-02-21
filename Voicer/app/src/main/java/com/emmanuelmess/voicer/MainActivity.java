@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 		final AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 		e = (TextView) findViewById(R.id.text);
 		//e.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla varius tortor magna, ut mattis ligula venenatis id. Suspendisse potenti. Etiam vitae lacus ex. Sed felis lorem, tempor nec tortor a, tempor tristique libero. Cras egestas, elit semper tempor vestibulum, magna.");
-		thread = new SpeechThread(getApplicationContext(), this);
+		thread = new SpeechThread(getApplicationContext());
 		thread.start();
 		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 		private final Object lock = new Object();
 		private int timeBetweenWords;
 
-		SpeechThread(Context context, AppCompatActivity activity) {
+		SpeechThread(Context context) {
 			t = new TextToSpeech(context, this);
 
 			timeBetweenWords = prefs.getInt(SettingsActivity.TIME_BETWEEN_WORDS_TEXT, 3);
@@ -141,41 +141,44 @@ public class MainActivity extends AppCompatActivity {
 
 		@Override
 		public void run() {
-			while(!this.isInterrupted()) {
+			while (!this.isInterrupted()) {
 				if (speak) {
 					String text = String.valueOf(e.getText());
-					int l = text.length();
-					String [] subdividedText = new String [(int) Math.ceil((double)l/MAX_LENGTH)];
+					if (timeBetweenWords == 0) {
+						speak(t, text, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_ID);
+					} else {
+						int l = text.length();
+						String[] subdividedText = new String[(int) Math.ceil((double) l/MAX_LENGTH)];
 
-					for(int i = 0; i < subdividedText.length; i++)
-						subdividedText[i] = text.substring((i)*MAX_LENGTH, (MAX_LENGTH < l - i*MAX_LENGTH? (i+1)*MAX_LENGTH:l));
+						for (int i = 0; i < subdividedText.length; i++)
+							subdividedText[i] = text.substring((i)*MAX_LENGTH, (MAX_LENGTH < l - i*MAX_LENGTH? (i + 1)*MAX_LENGTH:l));
 
-					loop0:
-					for (String aSubdividedText : subdividedText) {
-						Scanner s = new Scanner(aSubdividedText).useDelimiter(" ");
+						loop0:
+						for (String aSubdividedText : subdividedText) {
+							Scanner s = new Scanner(aSubdividedText).useDelimiter(" ");
 
-						while (s.hasNext()) {
-							int time;
-							synchronized (lock) {
-								if (!speak) break loop0;
+							while (s.hasNext()) {
+								int time;
+								synchronized (lock) {
+									if (!speak) break loop0;
 
-								String toRead = s.next();
-								time = (int) (timeBetweenWords*(toRead.length()/5f));
-								speak(t, toRead, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_ID);
+									String toRead = s.next();
+									time = (int) (timeBetweenWords*(toRead.length()/5f));
+									speak(t, toRead, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_ID);
+								}
+
+								try {
+									sleep(time);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
 							}
 
-							try {
-								sleep(time);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
+							while (t.isSpeaking()) {
+								waiting();
 							}
-						}
-
-						while (t.isSpeaking()) {
-							waiting();
 						}
 					}
-
 					speak = false;
 				} else {
 					try {
@@ -186,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 				}
 			}
 		}
+
 
 		TextToSpeech getTTS() {
 			return t;
