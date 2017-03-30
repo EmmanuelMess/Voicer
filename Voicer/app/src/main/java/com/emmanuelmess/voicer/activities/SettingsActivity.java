@@ -1,7 +1,5 @@
 package com.emmanuelmess.voicer.activities;
 
-import android.content.Context;
-import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -28,13 +26,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
 	public static final String TIME_BETWEEN_WORDS_TEXT = "time_words_text";
 
-	/**
-	 * Determines whether to always show the simplified settings UI, where
-	 * settings are presented in a single list. When false, settings are shown
-	 * as a master/detail two-pane view on tablets. When true, a single pane is
-	 * shown on tablets.
-	 */
-	private static final boolean ALWAYS_SIMPLE_PREFS = false;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		setupActionBar();
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		setupSimplePreferencesScreen();
+	}
 
 	/**
 	 * A preference value change listener that updates the preference's summary
@@ -48,15 +52,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 			return true;
 		}
 	};
-
-	/**
-	 * Helper method to determine if the device has an extra-large screen. For
-	 * example, 10" tablets are extra-large.
-	 */
-	private static boolean isXLargeTablet(Context context) {
-		return (context.getResources().getConfiguration().screenLayout
-				& Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-	}
 
 	/**
 	 * Binds a preference's summary to its value. More specifically, when the
@@ -74,20 +69,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 		// Trigger the listener immediately with the preference's current value.
 		sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
 				PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getInt(preference.getKey(), 3000));
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-		setupActionBar();
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		setupSimplePreferencesScreen();
 	}
 
 	/**

@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 			return t.speak(text.toString(), queueMode, null);
 	}
 
-	class SpeechThread extends Thread implements TextToSpeech.OnInitListener {
+	private class SpeechThread extends Thread implements TextToSpeech.OnInitListener {
 
 		private static final String UTTERANCE_ID = "utterance_id";
 		private static final int MAX_LENGTH = 2000;

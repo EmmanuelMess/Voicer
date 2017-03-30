@@ -7,4 +7,7 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_words"/>
+    <Preference
+        android:title="Version"
+        android:summary="@string/app_ver"/>
 </PreferenceScreen>

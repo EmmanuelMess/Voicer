@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Voicer</string>
+    <string name="app_ver" translatable="false">1.0.2</string>
+
     <string name="action_settings">Settings</string>
     <string name="crash_0">Send this report so that I can fix the issue</string>
     <string name="title_activity_settings">Settings</string>
