@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emmanuelmess.voicer.activities.DonationActivity;
 import com.emmanuelmess.voicer.activities.SettingsActivity;
 
 import java.util.Scanner;
@@ -106,9 +107,13 @@ public class MainActivity extends AppCompatActivity {
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-			return true;
+		switch (id) {
+			case R.id.action_settings:
+				startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+				return true;
+			case R.id.action_donate:
+				startActivity(new Intent(getApplicationContext(), DonationActivity.class));
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
