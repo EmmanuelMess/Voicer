@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Voicer</string>
     <string name="action_settings">Ajustes</string>
-    <string name="crash_0">Enviá este reporte así puedo solucionar el problema</string>
+    <string name="crash_toast_text">La app se cerro inesperadamente, se ha enviado un reporte de error</string>
     <string name="error">Error interno</string>
     <string name="example">Esto es un ejemplo</string>
     <string name="loaded">Todavia no se cargó…</string>

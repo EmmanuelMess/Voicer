@@ -20,11 +20,14 @@ import android.widget.Toast;
 import com.emmanuelmess.voicer.activities.DonationActivity;
 import com.emmanuelmess.voicer.activities.SettingsActivity;
 
+import org.acra.ACRA;
+
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
 	public static final String READABLE_TEXT = "text";
+	public static final String ACRA_TEXT = "text";
 
 	private SharedPreferences prefs;
 	private TextView e;
@@ -59,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
 				else if (am.getStreamVolume(AudioManager.STREAM_MUSIC) == 0)
 					Toast.makeText(context, context.getString(R.string.volume), Toast.LENGTH_SHORT).show();
 				else {
+					if(!BuildConfig.DEBUG)
+						ACRA.getErrorReporter().putCustomData(ACRA_TEXT, e.getText().toString());
+
 					if (!thread.getTTS().isSpeaking()) {
 						thread.startTTS();
 
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 	public void onResume() {
 		super.onResume();
 		e.setText(prefs.getString(READABLE_TEXT, ""));
+		if(!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().putCustomData(ACRA_TEXT, e.getText().toString());
 	}
 
 	@Override
@@ -90,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
 		if(thread.getTTS().isSpeaking()) {
 			thread.stopTTS();
 		}
+
+		if(!BuildConfig.DEBUG)
+			ACRA.getErrorReporter().clearCustomData();
 	}
 
 	@Override
