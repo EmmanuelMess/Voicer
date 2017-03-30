@@ -18,7 +18,6 @@ import org.acra.annotation.ReportsCrashes;
 		httpMethod = org.acra.sender.HttpSender.Method.PUT,
 		formUriBasicAuthLogin="adeforgedstaryingralturt",
 		formUriBasicAuthPassword="8611ffa302dad27941f2b0a9b9a279e7a393f190",
-		// Your usual ACRA configuration
 		mode = ReportingInteractionMode.TOAST,
 		resToastText = R.string.crash_toast_text)
 public class VoicerApplication extends Application {
